@@ -10,5 +10,15 @@ class User < ApplicationRecord
   has_secure_password
   VALID_PASSWORD_REGEX = /\A(?=.*[0-9])(?=.*[a-z])(?=.*[!@#$%^&_\-])([a-zA-Z0-9!@#$%^&_\-]+)\z/i
   validates :password, presence: true, length: { minimum: 6 },
-                      format: { with: VALID_PASSWORD_REGEX }
+                      format: { 
+                        with: VALID_PASSWORD_REGEX,
+                        message: "must have at least one letter, one number and symbol(!@#$%^&_\-)"
+                      }
+                      
+  def User.digest(string)
+    cost = ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST
+                                                : BCrypy::Engine.cost
+    
+    BCrypt::Password.create(string, cost: cost)
+  end
 end
